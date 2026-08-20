@@ -3,3 +3,4 @@ export default function handler(req, res) {
         mensaje: "Bienvenido a la versión 1 de nuestra API"
     });
 }
+
