@@ -1,0 +1,94 @@
+openapi: 3.0.0
+info:
+  title: Mi API Aventura
+  version: 1.0.0
+  description: Documentación de la API del módulo 7
+
+servers:
+  - url: https://ejercicios-api.vercel.app
+
+paths:
+  /api/v1/hola:
+    get:
+      summary: Mensaje de bienvenida
+      responses:
+        '200':
+          description: Devuelve un mensaje desde la variable de entorno MENSAJE_BIENVENIDA
+
+  /api/v1/login:
+    post:
+      summary: Genera un token JWT
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                usuario:
+                  type: string
+                email:
+                  type: string
+                password:
+                  type: string
+      responses:
+        '200':
+          description: Token generado correctamente
+        '401':
+          description: Credenciales inválidas
+
+  /api/v1/saludo:
+    get:
+      summary: Devuelve un saludo personalizado
+      parameters:
+        - in: query
+          name: nombre
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Saludo generado
+        '400':
+          description: Falta el parámetro nombre
+
+  /api/v1/usuarios:
+    get:
+      summary: Obtiene todos los usuarios (requiere token)
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Lista de usuarios
+        '401':
+          description: Token inválido o no proporcionado
+
+    post:
+      summary: Crea un usuario (requiere token)
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                nombre:
+                  type: string
+                email:
+                  type: string
+      responses:
+        '201':
+          description: Usuario creado correctamente
+        '400':
+          description: Datos inválidos
+        '401':
+          description: Token inválido o no proporcionado
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
