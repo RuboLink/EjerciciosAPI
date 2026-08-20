@@ -1,4 +1,4 @@
-export default function handler(req, res) {
+function handler(req, res) {
     const { nombre } = req.query;
 
     if (!nombre) {
@@ -11,3 +11,5 @@ export default function handler(req, res) {
         mensaje: `Hola, ${nombre}!`
     });
 }
+
+module.exports = handler;

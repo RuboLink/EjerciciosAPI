@@ -1,7 +1,7 @@
-import { connectDB } from "../../../lib/mongodb";
-import Usuario from "../../../models/Usuario";
+const { connectDB } = require("../../lib/mongodb");
+const Usuario = require("../../models/Usuario");
 
-export default async function handler(req, res) {
+async function handler(req, res) {
     await connectDB();
 
     try {
@@ -11,3 +11,5 @@ export default async function handler(req, res) {
         res.status(500).json({ mensaje: "Error obteniendo usuarios", error });
     }
 }
+
+module.exports = handler;
