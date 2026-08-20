@@ -8,15 +8,18 @@ const { connectDB } = require('./lib/mongodb.js');
 const app = express()
 const port = 3000
 
+app.use(express.json());
+
 app.get('/', (req, res) => {
   jsonTexto(req, res)
 })
 
 app.get('/api/v1/saludo', saludo);
-app.get('/api/v1/usuarios', usuarios);
+app.route('/api/v1/usuarios')
+  .get(usuarios)
+  .post(usuarios);
 
 async function start() {
-  await connectDB();
   app.listen(port, () => {
     console.log(`API escuchando en http://localhost:${port}`);
   });

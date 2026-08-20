@@ -1,58 +1,45 @@
-import mongoose from "mongoose";
+const { connectDB } = require("../../lib/mongodb.js");
+const Usuario = require("../../models/Usuario.js");
 
-const MONGODB_URI =
-    "mongodb+srv://ruboms_db_user:gxdc4cVJdGQKznaz@cluster0.u1r0xio.mongodb.net/mi_base?retryWrites=true&w=majority";
-
-    // --- Conexión inline (obligatorio para Vercel) ---
-    async function connectDB() {
-        if (mongoose.connection.readyState === 1) return;
-
-    await mongoose.connect(MONGODB_URI, {
-        bufferCommands: false,
-    });
+async function handler(req, res) {
+    if (!['GET', 'POST'].includes(req.method)) {
+        res.setHeader('Allow', ['GET', 'POST']);
+        return res.status(405).json({ mensaje: 'Método no permitido' });
     }
 
-    // --- Modelo inline (obligatorio para Vercel) ---
-    const UsuarioSchema = new mongoose.Schema({
-        nombre: String,
-        email: String,
-    });
-
-    const Usuario =
-        mongoose.models.Usuario || mongoose.model("Usuario", UsuarioSchema);
-
-    // --- Handler ---
-    export default async function handler(req, res) {
+    try {
         await connectDB();
 
-        if (req.method === "GET") {
-            try {
-            const usuarios = await Usuario.find({});
+        if (req.method === 'GET') {
+            const usuarios = await Usuario.find({}).lean();
             return res.status(200).json(usuarios);
-            } catch (error) {
-            return res.status(500).json({ mensaje: "Error obteniendo usuarios", error });
-            }
         }
 
-        if (req.method === "POST") {
-            const { nombre, email } = req.body;
+        const { nombre, email } = req.body || {};
 
-            if (!nombre || !email) {
-                return res.status(400).json({
-                    mensaje: "Debes proporcionar nombre y email"
-                });
-            }
-
-            try {
-            const nuevoUsuario = await Usuario.create({ nombre, email });
-            return res.status(201).json({
-                mensaje: "Usuario creado correctamente",
-                usuario: nuevoUsuario
+        if (typeof nombre !== 'string' || !nombre.trim() ||
+            typeof email !== 'string' || !email.trim()) {
+            return res.status(400).json({
+                mensaje: 'Debes proporcionar nombre y email como texto'
             });
-            } catch (error) {
-                return res.status(500).json({ mensaje: "Error creando usuario", error });
-            }
         }
 
-    return res.status(405).json({ mensaje: "Método no permitido" });
+        const nuevoUsuario = await Usuario.create({
+            nombre: nombre.trim(),
+            email: email.trim().toLowerCase(),
+        });
+
+        return res.status(201).json({
+            mensaje: 'Usuario creado correctamente',
+            usuario: nuevoUsuario,
+        });
+    } catch (error) {
+        console.error('Error en /api/v1/usuarios:', error);
+        return res.status(500).json({
+            mensaje: 'Error interno al acceder a MongoDB',
+            error: process.env.NODE_ENV === 'production' ? undefined : error.message,
+        });
+    }
 }
+
+module.exports = handler;
