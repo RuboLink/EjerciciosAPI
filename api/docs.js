@@ -1,12 +1,16 @@
 const path = require('path');
-const express = require('express');
 const swaggerUi = require('swagger-ui-express');
 const YAML = require('yamljs');
 
-const app = express();
 const swaggerDocument = YAML.load(path.join(__dirname, '..', 'swagger.yaml'));
 
-app.use('/', swaggerUi.serve);
-app.get('/', swaggerUi.setup(swaggerDocument));
+function handler(req, res) {
+	if (req.method !== 'GET') {
+		res.setHeader('Allow', 'GET');
+		return res.status(405).json({ mensaje: 'Método no permitido' });
+	}
 
-module.exports = app;
+	return res.status(200).send(swaggerUi.generateHTML(swaggerDocument));
+}
+
+module.exports = handler;
