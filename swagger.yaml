@@ -8,7 +8,7 @@ servers:
   - url: https://ejercicios-api.vercel.app
 
 paths:
-  /api/v1/hola:
+  /:
     get:
       summary: Mensaje de bienvenida
       responses:

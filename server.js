@@ -1,5 +1,6 @@
 require("dotenv").config();
 
+const path = require('path');
 const express = require('express');
 const jsonTexto = require('./api/v1/hola.js');
 const saludo = require('./api/v1/saludo.js');
@@ -9,7 +10,7 @@ const { connectDB } = require('./lib/mongodb.js');
 
 const swaggerUi = require("swagger-ui-express");
 const YAML = require("yamljs");
-const swaggerDocument = YAML.load("./swagger.yaml");
+const swaggerDocument = YAML.load(path.join(__dirname, "swagger.yaml"));
 
 const app = express();
 const port = 3000;
@@ -29,14 +30,15 @@ app.route('/api/v1/usuarios')
   .get(usuarios)
   .post(usuarios);
 
-async function start() {
+function start() {
   app.listen(port, () => {
     console.log(`API escuchando en http://localhost:${port}`);
     console.log(`Documentación disponible en http://localhost:${port}/docs`);
   });
 }
 
-start().catch((error) => {
-  console.error('No se pudo conectar con MongoDB Atlas:', error.message);
-  process.exit(1);
-});
+if (require.main === module) {
+  start();
+}
+
+module.exports = app;
