@@ -1,6 +1,6 @@
 export default function handler(req, res) {
     res.status(200).json({
-        mensaje: "¡API actualizada y mejorada!"
+        mensaje: process.env.MENSAJE_BIENVENIDA
     });
 }
 
