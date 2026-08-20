@@ -1,0 +1,24 @@
+{
+  "name": "mi-api-aventura",
+  "version": "1.0.0",
+  "description": "Desarrollo de los ejercicios del módulo 7 de back-end",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node v1/server.js"
+  },
+  "keywords": [],
+  "author": "Rubén",
+  "license": "ISC",
+  "devEngines": {
+    "packageManager": {
+      "name": "pnpm",
+      "version": "^11.20.0",
+      "onFail": "download"
+    }
+  },
+  "type": "commonjs",
+  "dependencies": {
+    "express": "^5.2.1"
+  }
+}
